@@ -19,17 +19,13 @@ public class TasksController {
 	
 	@Value("${backend.host}")
 	private String BACKEND_HOST;
-
 	@Value("${backend.port}")
 	private String BACKEND_PORT;
-	
 	@Value("${app.version}")
 	private String VERSION;
-	
 	public String getBackendURL() {
 		return "http://" + BACKEND_HOST + ":" + BACKEND_PORT;
 	}
-	
 	@GetMapping("")
 	public String index(Model model) {
 		model.addAttribute("todos", getTodos());
@@ -37,19 +33,17 @@ public class TasksController {
 			model.addAttribute("version", VERSION);
 		return "index";
 	}
-	
 	@GetMapping("add")
 	public String add(Model model) {
 		model.addAttribute("todo", new Todo());
 		return "add";
 	}
-
 	@PostMapping("save")
 	public String save(Todo todo, Model model) {
 		try {
 			RestTemplate restTemplate = new RestTemplate();
 			restTemplate.postForObject(
-					getBackendURL() + "/tasks-backend/todo", todo, Object.class);			
+					getBackendURL() + "/todo", todo, Object.class);
 			model.addAttribute("sucess", "Sucess!");
 			return "index";
 		} catch(Exception e) {
@@ -63,21 +57,18 @@ public class TasksController {
 			model.addAttribute("todos", getTodos());
 		}
 	}
-	
 	@GetMapping("delete/{id}")
 	public String delete(@PathVariable Long id, Model model) {
 		RestTemplate restTemplate = new RestTemplate();
-		restTemplate.delete(getBackendURL() + "/tasks-backend/todo/" + id);			
+		restTemplate.delete(getBackendURL() + "/todo/" + id);
 		model.addAttribute("success", "Success!");
 		model.addAttribute("todos", getTodos());
 		return "index";
 	}
-
-	
 	@SuppressWarnings("unchecked")
 	private List<Todo> getTodos() {
 		RestTemplate restTemplate = new RestTemplate();
 		return restTemplate.getForObject(
-				getBackendURL() + "/tasks-backend/todo", List.class);
+				getBackendURL() + "/todo", List.class);
 	}
 }
